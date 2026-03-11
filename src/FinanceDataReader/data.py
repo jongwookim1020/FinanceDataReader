@@ -3,7 +3,7 @@
 
 from FinanceDataReader.ecos.data import (EcosDataReader, EcosKeyStatDataReader)
 from FinanceDataReader.ecos.snap import (EcosSnapReader)
-from FinanceDataReader.krx.data import (KrxDailyReader, KrxDailyDetailReader, KrxIndexReader, KrxDelistingReader)
+from FinanceDataReader.krx.data import (KrxDailyReader, KrxDailyDetailReader, KrxIndexReaderCache, KrxIndexReader, KrxDelistingReader)
 from FinanceDataReader.krx.snap import (KrxSnapReader)
 from FinanceDataReader.krx.listing import (KrxStockListing, KrxDelisting, KrxMarcapListing, KrxAdministrative)
 from FinanceDataReader.yahoo.data import (YahooDailyReader)
@@ -56,15 +56,25 @@ def DataReader(symbol:str, start=None, end=None, exchange=None, data_source=None
     ## major symbols (data source NOT specified)
     if not source: # source not specified -> stocks
         # 1) major symbols (data source NOT specified)
-        # 1-1) KRX major indices
+        # 1-1) KRX major indices from cache
         krx_index_symbol_map = {
-            'KS11': '1001', 'KOSPI': '1001',  # 코스피
-            'KQ11': '2001', 'KOSDAQ': '2001', # 코스닥
-            'KS200': '1028', 'KPI200': '1028', # 코스피200
+            'KS11': 'ks11', 'KOSPI': 'ks11',  # 코스피
+            'KQ11': 'kq11', 'KOSDAQ': 'kq11', # 코스닥
+            'KS200': 'ks200', 'KPI200': 'ks200', # 코스피200
         }
         if symbol in krx_index_symbol_map:
             symbol = krx_index_symbol_map[symbol]
-            return KrxIndexReader(symbol, start, end).read()
+            return KrxIndexReaderCache(symbol, start, end).read()
+
+        # 1-1) KRX major indices (authenication required)
+        # krx_index_symbol_map = {
+        #     'KS11': '1001', 'KOSPI': '1001',  # 코스피
+        #     'KQ11': '2001', 'KOSDAQ': '2001', # 코스닥
+        #     'KS200': '1028', 'KPI200': '1028', # 코스피200
+        # }
+        # if symbol in krx_index_symbol_map:
+        #     symbol = krx_index_symbol_map[symbol]
+        #     return KrxIndexReader(symbol, start, end).read()
 
         # 1-2) yahoo major indices
         yahoo_index_symbol_map = { 
