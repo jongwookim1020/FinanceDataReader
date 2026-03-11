@@ -1,6 +1,6 @@
 # ----------------------------------------------
 import sys
-sys.path.insert(0, r'G:\내 드라이브\g_dev\FinanceDataReader-dev\FinanceDataReader\src')
+# sys.path.insert(0, r'G:\내 드라이브\g_dev\FinanceDataReader-dev\FinanceDataReader\src')
 
 import pytest
 import FinanceDataReader as fdr
@@ -248,5 +248,6 @@ def test_snap_krx():
     df = fdr.SnapDataReader('KRX/INDEX/LIST') # KRX 지수목록
     assert len(df) >= 100
 
-    df = fdr.SnapDataReader('KRX/INDEX/STOCK/1002') # 코스피 대형주 종목 리스트
+def test_snap_krx_stock_list():
+    df = fdr.SnapDataReader('KRX/INDEX/STOCK/1001') # 코스피 대형주 종목 리스트
     assert len(df) >= 90

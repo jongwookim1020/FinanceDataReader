@@ -4,8 +4,8 @@
 from FinanceDataReader.ecos.data import (EcosDataReader, EcosKeyStatDataReader)
 from FinanceDataReader.ecos.snap import (EcosSnapReader)
 from FinanceDataReader.krx.data import (KrxDailyReader, KrxDailyDetailReader, KrxIndexReaderCache, KrxIndexReader, KrxDelistingReader)
-from FinanceDataReader.krx.snap import (KrxSnapReader)
-from FinanceDataReader.krx.listing import (KrxStockListing, KrxDelisting, KrxMarcapListing, KrxAdministrative)
+from FinanceDataReader.krx.snap import (KrxSnapReader, KrxSnapReaderCache)
+from FinanceDataReader.krx.listing import (KrxStockListing, KrxDelisting, KrxDelistingCache,KrxMarcapListing, KrxAdministrative, KrxMarcapListingCache)
 from FinanceDataReader.yahoo.data import (YahooDailyReader)
 from FinanceDataReader.nasdaq.listing import (NasdaqStockListing)
 from FinanceDataReader.wikipedia.listing import (WikipediaStockListing)
@@ -146,7 +146,7 @@ def SnapDataReader(ticker: str) -> pd.DataFrame:
     '''
     ticker = ticker.upper()
     if ticker.startswith('KRX/'):
-        return KrxSnapReader(ticker).read()
+        return KrxSnapReaderCache(ticker).read()
     elif ticker.startswith('ECOS/'):
         return EcosSnapReader(ticker).read()
     elif ticker.startswith('NAVER/'):
@@ -167,13 +167,13 @@ def StockListing(market: str, start=None, end=None) -> pd.DataFrame:
     '''
     market = market.upper()
     if market in ['KRX', 'KOSPI', 'KOSDAQ', 'KONEX', 'KRX-MARCAP']:
-        return KrxMarcapListing(market).read()
+        return KrxMarcapListingCache(market).read()
     elif market in ['KRX-DESC', 'KOSPI-DESC', 'KOSDAQ-DESC', 'KONEX-DESC']:
         return KrxStockListing(market).read()
     elif market in ['NASDAQ', 'NYSE', 'AMEX', 'SSE', 'SZSE', 'HKEX', 'TSE', 'HOSE']:
         return NaverStockListing(market).read()
     elif market in ['KRX-DELISTING' ]:
-        return KrxDelisting(market, start, end).read()
+        return KrxDelistingCache(market, start, end).read()
     elif market in ['KRX-ADMINISTRATIVE', 'KRX-ADMIN' ]:
         return KrxAdministrative(market).read()
     elif market in ['S&P500', 'SP500']:

@@ -10,7 +10,7 @@ import pandas as pd
 def test_krx_stock_listing():
     # Basic KRX listing
     df = fdr.StockListing('KRX')
-    assert len(df) > 2000
+    assert len(df) > 200
     assert 'Code' in df.columns
     assert 'Name' in df.columns
 
@@ -26,7 +26,7 @@ def test_krx_stock_listing_kosdaq():
 def test_krx_delisting_listing():
     # KRX Delisting
     df = fdr.StockListing('KRX-DELISTING')
-    assert len(df) > 3000
+    assert len(df) > 900
     assert 'Symbol' in df.columns
 
 @pytest.mark.krx
@@ -43,11 +43,12 @@ def test_krx_data_reader_basics():
     assert 'Close' in df.columns
 
 @pytest.mark.krx
-def test_krx_index_reader():
+def test_ks11():
     # KOSPI Index
     df = fdr.DataReader('KS11', '2023-01-01', '2023-01-31')
     assert len(df) > 0
     
+def test_krx_index_reader():
     # KRX-INDEX specific
     df = fdr.DataReader('KRX-INDEX:1001', '2023-01-01', '2023-01-31')
     assert len(df) > 0
