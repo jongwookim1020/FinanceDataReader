@@ -97,6 +97,41 @@ class KrxMarcapListing:
         df.attrs = {'exchange':'KRX', 'source':'KRX', 'data':'LISTINGS'}
         return df
 
+
+class KrxStockListingCache: # descriptive information
+    def __init__(self, market):
+        self.market = market
+        self.headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Referer': 'https://data.krx.co.kr/contents/MDC/MDI/outerLoader/index.cmd'
+            }
+
+    def read(self):
+        url = 'http://data.krx.co.kr/comm/bldAttendant/executeForResourceBundle.cmd?baseName=krx.mdc.i18n.component&key=B128.bld'
+        try:
+            r = requests.get(url, headers=self.headers)
+            j = json.loads(r.text)
+        except:
+            print(r.text)
+            raise ValueError(f"Failed to load data from {url}")
+        date_str = j['result']['output'][0]['max_work_dt']
+        formatted_date = datetime.strptime(date_str, '%Y%m%d').strftime('%Y-%m-%d')
+
+        # 'KRX-DESC', 'KOSPI-DESC', 'KOSDAQ-DESC', 'KONEX-DESC'
+        mkt_list = ['KRX-DESC', 'KOSPI-DESC', 'KOSDAQ-DESC', 'KONEX-DESC']
+        if self.market not in mkt_list:
+            raise ValueError(f"market shoud be one of {mkt_list}")
+
+        csv_url = f'https://raw.githubusercontent.com/FinanceData/fdr_krx_data_cache/refs/heads/master/data/listing/desc/{formatted_date}.csv'
+        df = pd.read_csv(csv_url, dtype={'Code': str})
+        df['ListingDate'] = pd.to_datetime(df['ListingDate'], errors='coerce')
+
+        if self.market in ['KOSPI-DESC', 'KOSDAQ-DESC', 'KONEX-DESC']:
+            df = df[df['Market'] == self.market.replace('-DESC', '')].reset_index(drop=True)
+
+        df.attrs = {'exchange':'KRX', 'source':'KRX', 'data':'LISTINGS'}
+        return df
+
     
 class KrxStockListing: # descriptive information
     def __init__(self, market):

@@ -3,9 +3,13 @@
 
 from FinanceDataReader.ecos.data import (EcosDataReader, EcosKeyStatDataReader)
 from FinanceDataReader.ecos.snap import (EcosSnapReader)
-from FinanceDataReader.krx.data import (KrxDailyReader, KrxDailyDetailReader, KrxIndexReaderCache, KrxIndexReader, KrxDelistingReader)
+from FinanceDataReader.krx.data import (KrxDailyReader, KrxDailyDetailReader, KrxDelistingReader)
+from FinanceDataReader.krx.data import (KrxIndexReader, KrxIndexReaderCache)
 from FinanceDataReader.krx.snap import (KrxSnapReader, KrxSnapReaderCache)
-from FinanceDataReader.krx.listing import (KrxStockListing, KrxDelisting, KrxDelistingCache,KrxMarcapListing, KrxAdministrative, KrxMarcapListingCache)
+from FinanceDataReader.krx.listing import (KrxStockListing, KrxStockListingCache)
+from FinanceDataReader.krx.listing import (KrxDelisting, KrxDelistingCache)
+from FinanceDataReader.krx.listing import (KrxMarcapListing, KrxMarcapListingCache)
+from FinanceDataReader.krx.listing import (KrxAdministrative)
 from FinanceDataReader.yahoo.data import (YahooDailyReader)
 from FinanceDataReader.nasdaq.listing import (NasdaqStockListing)
 from FinanceDataReader.wikipedia.listing import (WikipediaStockListing)
@@ -169,7 +173,7 @@ def StockListing(market: str, start=None, end=None) -> pd.DataFrame:
     if market in ['KRX', 'KOSPI', 'KOSDAQ', 'KONEX', 'KRX-MARCAP']:
         return KrxMarcapListingCache(market).read()
     elif market in ['KRX-DESC', 'KOSPI-DESC', 'KOSDAQ-DESC', 'KONEX-DESC']:
-        return KrxStockListing(market).read()
+        return KrxStockListingCache(market).read()
     elif market in ['NASDAQ', 'NYSE', 'AMEX', 'SSE', 'SZSE', 'HKEX', 'TSE', 'HOSE']:
         return NaverStockListing(market).read()
     elif market in ['KRX-DELISTING' ]:

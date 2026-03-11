@@ -1,6 +1,6 @@
 # ----------------------------------------------
 import sys
-# sys.path.insert(0, r'G:\내 드라이브\g_dev\FinanceDataReader-dev\FinanceDataReader\src')
+sys.path.insert(0, r'G:\내 드라이브\g_dev\FinanceDataReader-dev\FinanceDataReader\src')
 
 import pytest
 import FinanceDataReader as fdr
@@ -177,16 +177,16 @@ def test_stocklisting_desc():
     # KRX 전종목 목록 (설명 중심, 주식 + 펀드등 전종목)
     # Symbol, Market, Name, Sector, Industry, ListingDate, SettleMonth, Representative, HomePage, Region
 
-    df = fdr.StockListing('KRX-DESC') # 한국거래소 전체 7000+ 종목
+    df = fdr.StockListing('KRX-DESC') # 한국거래소 전체 종목
     assert len(df) > 100
     
-    df = fdr.StockListing('KOSPI-DESC') # KOSPI 5000+ 종목
+    df = fdr.StockListing('KOSPI-DESC') # KOSPI 종목
     assert len(df) > 100
     
-    df = fdr.StockListing('KOSDAQ-DESC') # KOSDAQ 1600+ 종목
+    df = fdr.StockListing('KOSDAQ-DESC') # KOSDAQ 종목
     assert len(df) > 100
     
-    df = fdr.StockListing('KONEX-DESC') # 100+ 종목
+    df = fdr.StockListing('KONEX-DESC') #  KONEX 종목
     assert len(df) > 100
 
 @pytest.mark.krx_listings
