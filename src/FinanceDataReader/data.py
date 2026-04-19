@@ -15,9 +15,9 @@ from FinanceDataReader.nasdaq.listing import (NasdaqStockListing)
 from FinanceDataReader.wikipedia.listing import (WikipediaStockListing)
 from FinanceDataReader.investing.data import (InvestingDailyReader)
 from FinanceDataReader.investing.listing import (InvestingEtfListing)
-from FinanceDataReader.naver.data import (NaverDailyReader)
+from FinanceDataReader.naver.data import (NaverDailyReader, NaverCryptoDailyReader)
 from FinanceDataReader.naver.snap import (NaverSnapReader)
-from FinanceDataReader.naver.listing import (NaverStockListing, NaverEtfListing)
+from FinanceDataReader.naver.listing import (NaverStockListing, NaverEtfListing, NaverCryptoListing)
 from FinanceDataReader.fred.data import (FredReader)
 from FinanceDataReader._utils import (_convert_letter_to_num, _validate_dates)
 
@@ -109,7 +109,8 @@ def DataReader(symbol:str, start=None, end=None, exchange=None, data_source=None
         
     else:  # data source specified
         if source == 'KRX':
-            return KrxDailyReader(codes, start, end).read()
+            # return KrxDailyReader(codes, start, end).read()
+            return NaverDailyReader(codes, start, end).read()
         elif source == 'KRX-DETAIL':
             return KrxDailyDetailReader(codes, start, end).read()
         elif source == 'KRX-INDEX':
@@ -130,6 +131,8 @@ def DataReader(symbol:str, start=None, end=None, exchange=None, data_source=None
             return EcosDataReader(codes, start, end).read()
         elif source == 'ECOS-KEYSTAT':
             return EcosKeyStatDataReader(codes, start, end).read()
+        elif source in ['UPBIT', 'BITHUMB']:
+            return NaverCryptoDailyReader(codes, start, end, exchange=source).read()
         else:
             msg = f'"{symbol}" is not implemented'
             raise NotImplementedError(msg)
@@ -171,7 +174,8 @@ def StockListing(market: str, start=None, end=None) -> pd.DataFrame:
     '''
     market = market.upper()
     if market in ['KRX', 'KOSPI', 'KOSDAQ', 'KONEX', 'KRX-MARCAP']:
-        return KrxMarcapListingCache(market).read()
+        # return KrxMarcapListingCache(market).read()
+        return NaverStockListing(market).read()
     elif market in ['KRX-DESC', 'KOSPI-DESC', 'KOSDAQ-DESC', 'KONEX-DESC']:
         return KrxStockListingCache(market).read()
     elif market in ['NASDAQ', 'NYSE', 'AMEX', 'SSE', 'SZSE', 'HKEX', 'TSE', 'HOSE']:
@@ -186,6 +190,8 @@ def StockListing(market: str, start=None, end=None) -> pd.DataFrame:
         toks = market.split('/')
         _, country = toks[0], toks[1]
         return NaverEtfListing(country).read()
+    elif market in ['UPBIT', 'BITHUMB']:
+        return NaverCryptoListing(market).read()
     else:
         # 해외 ETF 지원 잠정 중단
         msg = f'"{market}" is not implemented'
