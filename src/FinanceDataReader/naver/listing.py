@@ -29,7 +29,9 @@ class NaverStockListing:
             'HKEX':'HONG_KONG',
             'TSE':'TOKYO',
             'HOSE':'HOCHIMINH', 
-            'KRX':'KRX', 
+            'KRX':'all', 
+            'KOSPI':'KOSPI', 
+            'KOSDAQ':'KOSDAQ', 
         }
         try:
             exchange = exchange_map[self.market]
@@ -44,11 +46,17 @@ class NaverStockListing:
         # phase 1 : http://api.stock.naver.com/stock/exchange/KOSPI/marketValue?page=1&pageSize=3
         #           http://api.stock.naver.com/stock/exchange/NASDAQ/marketValue?page=1&pageSize=3
         # phase 2 : https://m.stock.naver.com/front-api/stock/domestic/stockList?sortType=marketValue&category=all&pageSize=3&domesticStockExchangeType=KRX&page=1
+        #           https://m.stock.naver.com/front-api/stock/domestic/stockList?sortType=marketValue&category=KOSPI&pageSize=50&domesticStockExchangeType=KRX&page=1
+        #           https://m.stock.naver.com/front-api/stock/domestic/stockList?sortType=marketValue&category=KOSDAQ&pageSize=50&domesticStockExchangeType=KRX&page=1
         #           https://m.stock.naver.com/front-api/worldstock/exchange/stock/list?stockExchangeType=NASDAQ&stockPriceSortType=marketValue&page=1&pageSize=3
         # phase 3 : https://stock.naver.com/api/domestic/market/stock/default?tradeType=KRX&marketType=ALL&orderType=marketSum&startIdx=0&pageSize=3
         #           https://stock.naver.com/api/foreign/market/stock/global?nation=USA&tradeType=NSQ&orderType=marketValue&startIdx=0&pageSize=3
-        if exchange.upper() == 'KRX':
-            url = f'https://m.stock.naver.com/front-api/stock/domestic/stockList?sortType=marketValue&category=all&pageSize=50&domesticStockExchangeType={exchange}&page=1'
+        if exchange.upper() == 'ALL':
+            url = f'https://m.stock.naver.com/front-api/stock/domestic/stockList?sortType=marketValue&category={exchange}&pageSize=50&domesticStockExchangeType=KRX&page=1'
+        elif exchange.upper() == 'KOSPI':
+            url = f'https://m.stock.naver.com/front-api/stock/domestic/stockList?sortType=marketValue&category={exchange}&pageSize=50&domesticStockExchangeType=KRX&page=1'
+        elif exchange.upper() == 'KOSDAQ':
+            url = f'https://m.stock.naver.com/front-api/stock/domestic/stockList?sortType=marketValue&category={exchange}&pageSize=50&domesticStockExchangeType=KRX&page=1'
         else:
             url = f'http://api.stock.naver.com/stock/exchange/{exchange}/marketValue?page=1&pageSize=60'
         headers={'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
@@ -66,8 +74,12 @@ class NaverStockListing:
 
         df_list = []
         for page in range(100): 
-            if exchange.upper() == 'KRX':
-                url = f'https://m.stock.naver.com/front-api/stock/domestic/stockList?sortType=marketValue&category=all&pageSize=50&domesticStockExchangeType={exchange}&page={page+1}'
+            if exchange.upper() == 'ALL':
+                url = f'https://m.stock.naver.com/front-api/stock/domestic/stockList?sortType=marketValue&category={exchange}&pageSize=50&domesticStockExchangeType=KRX&page={page+1}'
+            elif exchange.upper() == 'KOSPI':
+                url = f'https://m.stock.naver.com/front-api/stock/domestic/stockList?sortType=marketValue&category={exchange}&pageSize=50&domesticStockExchangeType=KRX&page={page+1}'
+            elif exchange.upper() == 'KOSDAQ':
+                url = f'https://m.stock.naver.com/front-api/stock/domestic/stockList?sortType=marketValue&category={exchange}&pageSize=50&domesticStockExchangeType=KRX&page={page+1}'
             else:
                 url = f'http://api.stock.naver.com/stock/exchange/{exchange}/marketValue?page={page+1}&pageSize=60'
             try:

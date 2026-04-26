@@ -127,6 +127,7 @@ def DataReader(symbol:str, start=None, end=None, exchange=None, data_source=None
             return FredReader(codes, start, end).read()
         elif source in ['NASDAQ', 'NYSE', 'AMEX', 'SSE', 'SZSE', 'HKEX', 'TSE', 'HOSE']:
             return YahooDailyReader(codes, start, end, source).read()
+            # return NaverDailyReader(codes, start, end).read()
         elif source == 'ECOS':
             return EcosDataReader(codes, start, end).read()
         elif source == 'ECOS-KEYSTAT':
